@@ -1,0 +1,3 @@
+[submodule "build/w4m-cgh-docker"]
+	path = build/w4m-cgh-docker
+	url = git@github.com:HegemanLab/w4m-cgh-docker.git

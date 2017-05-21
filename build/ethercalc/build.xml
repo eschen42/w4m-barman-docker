@@ -1,0 +1,13 @@
+<project name="ethercalc" default="build.docker">
+
+	<!-- BUILD DOCKER -->
+	<target name="build.docker">
+		<exec executable="docker">
+			<arg value="build"/>
+			<arg value="-t"/>
+      <arg value="eschen42/ethercalc"/>
+			<arg value="."/>
+		</exec>
+	</target>
+
+</project>
