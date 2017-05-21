@@ -1,5 +1,4 @@
 #!/bin/bash
-# this file is to be run as root or sudo -E
 
 # find the directory containing this script
 MY_SOURCE="${BASH_MY_SOURCE[0]}"
@@ -10,6 +9,9 @@ while [ -h "$MY_SOURCE" ]; do # resolve $MY_SOURCE until the file is no longer a
 done
 MY_DIR="$( cd -P "$( dirname "$MY_SOURCE" )" && pwd )"
 MY_DIR_NAME=$(echo $MY_DIR | sed -e 's?.*/??')
+
+# abort if any command fails or enviroment variable is not set properly
+set -eu
 
 # set up GALAXY_IDENTITY for this script and galaxy-compose.xml
 GALAXY_IDENTITY=$(cat ${MY_DIR}/GALAXY_IDENTITY); export GALAXY_IDENTITY
@@ -34,10 +36,14 @@ echo DOCKER_UID                = $DOCKER_UID
 echo GALAXY_IDENTITY           = $GALAXY_IDENTITY
 echo GALAXY_CONFIG_ADMIN_USERS = $GALAXY_CONFIG_ADMIN_USERS
 echo EXPORT_PARENT_DIR         = $EXPORT_PARENT_DIR
+set +e
 
 ###############################
 
 # start the suite of docker containers for the Galaxy instance 
 echo running docker-compose up for UID=$DOCKER_USER
-sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml up -d
-
+(
+  sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml up -d
+) && (
+  echo docker-compose up succeeded
+)

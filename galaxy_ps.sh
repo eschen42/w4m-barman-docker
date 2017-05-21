@@ -1,5 +1,7 @@
 #!/bin/bash
-# this file is to be run as root or sudo -E
+
+# abort if any command fails or enviroment variable is not set properly
+set -eu
 
 # find the directory containing this script
 MY_SOURCE="${BASH_MY_SOURCE[0]}"

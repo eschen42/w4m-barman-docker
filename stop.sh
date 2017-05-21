@@ -1,5 +1,4 @@
 #!/bin/bash
-# this file is to be run as root or sudo -E
 
 # find the directory containing this script
 MY_SOURCE="${BASH_MY_SOURCE[0]}"
@@ -10,6 +9,9 @@ while [ -h "$MY_SOURCE" ]; do # resolve $MY_SOURCE until the file is no longer a
 done
 MY_DIR="$( cd -P "$( dirname "$MY_SOURCE" )" && pwd )"
 MY_DIR_NAME=$(echo $MY_DIR | sed -e 's?.*/??')
+
+# abort if any command fails or enviroment variable is not set properly
+set -eu
 
 # set up GALAXY_IDENTITY for this script and galaxy-compose.xml
 GALAXY_IDENTITY=$(cat ${MY_DIR}/GALAXY_IDENTITY); export GALAXY_IDENTITY
@@ -29,6 +31,7 @@ DOCKER_USER=galaxy
 # extract and export UID for docker user
 DOCKER_UID=$(grep "^$DOCKER_USER:" /etc/passwd | cut -f 3 -d ':'); export DOCKER_UID
 
+set +e
 echo stop Galaxy processes gracefully - notably, postgresql
 sudo -E docker exec -ti ${GALAXY_IDENTITY}_galaxy_1 bash -c "supervisorctl stop all"
 
@@ -36,8 +39,13 @@ sudo -E docker exec -ti ${GALAXY_IDENTITY}_galaxy_1 bash -c "supervisorctl stop 
 
 # stop the suite of docker containers for the Galaxy instance 
 echo running docker-compose down for UID=$DOCKER_USER
-sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml down
+(
+  sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml down
+) && (
+  echo docker-compose down succeeded
+)
 
-# clean up volumes that will never be used again
+echo cleaning up volumes that will never be used again
 # docker volume rm `docker volume ls  -f 'dangling=true' | grep -v DRIVER | sed -e "s/local[ ]*//"`
 sudo -E docker volume rm $( sudo docker volume ls -q -f 'dangling=true' )
+echo clean-up completed
