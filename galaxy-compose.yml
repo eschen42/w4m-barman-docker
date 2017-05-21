@@ -1,0 +1,77 @@
+# this is the file used by docker-compose to launch ethercalc
+# to start ethercalc: sudo docker-compose -f ./ethercalc-compose.yml up -d
+# to stop  ethercalc: sudo docker-compose -f ./ethercalc-compose.yml down
+
+# EtherCalc REST API docs: http://docs.ethercalc.apiary.io/ or https://github.com/audreyt/ethercalc/blob/master/API.md
+# EtherCalc home: https://ethercalc.net/
+# EtherCalc GitHub: https://github.com/audreyt/ethercalc
+# EtherCalc Docker: https://hub.docker.com/r/audreyt/ethercalc/
+# docker-compose reference: https://docs.docker.com/compose/
+# docker-compose variable substitution: https://docs.docker.com/compose/compose-file/#variable-substitution
+
+# Launch galaxy in a Docker container
+galaxy:
+  security_opt:
+    - label:user:${DOCKER_UID}
+  # for some reason, cap_drop all causes the galaxy container to infinitely restart
+  # cap_drop:
+  #   - ALL
+  # image: workflow4metabolomics/galaxy-workflow4metabolomics:release-2.5.1.4
+  # image: workflow4metabolomics/galaxy-workflow4metabolomics:latest
+  image: galaxy-w4m-cgh:latest
+  ports:
+    - "9080:80"
+    - "9021:21"
+  volumes:
+    - ${EXPORT_PARENT_DIR}/export:/export/
+      # - /zpdrone/drone/home/ucosm/${GALAXY_IDENTITY}/local_tools:/local_tools/
+  environment:
+    - GALAXY_CONFIG_ADMIN_USERS=${GALAXY_CONFIG_ADMIN_USERS}
+    - GALAXY_CONFIG_BRAND="${GALAXY_IDENTITY} W4M"
+    - GALAXY_CONFIG_MASTER_API_KEY=${GALAXY_CONFIG_MASTER_API_KEY}
+      #- GALAXY_CONFIG_TOOL_CONFIG_FILE=local_tools/my_tools.xml
+      #- GALAXY_CONFIG_TOOL_CONFIG_FILE=config/tool_conf.xml,config/shed_tool_conf.xml,/local_tools/my_tools.xml
+  links:
+    - redis
+  restart: always
+
+# Launch ethercalc in a Docker container
+ethercalc:
+  security_opt:
+    - label:user:${DOCKER_UID}
+  cap_drop:
+    - ALL
+  image: eschen42/ethercalc
+  ports:
+    - "8000:8000"
+  links:
+    - redis
+  restart: always
+
+# Launch redis in another Docker container to serve as the datastore for ethercalc
+redis:
+  security_opt:
+    - label:user:${DOCKER_UID}
+  # for some reason, cap_drop all causes the redis-server container to infinitely restart
+  # cap_drop:
+  #   - ALL
+  image: redis:latest
+  # volumes:
+  #   - /var/lib/redis:/data
+  command: redis-server --appendonly yes
+  restart: always
+
+# Launch ethercalc in a Docker container
+ethercalc:
+  security_opt:
+    - label:user:${DOCKER_UID}
+  cap_drop:
+    - ALL
+  #image: audreyt/ethercalc
+  image: eschen42/ethercalc
+  ports:
+    - "8000:8000"
+  links:
+    - redis
+  restart: always
+
