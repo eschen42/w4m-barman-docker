@@ -1,11 +1,7 @@
-# this is the file used by docker-compose to launch ethercalc
-# to start ethercalc: sudo docker-compose -f ./ethercalc-compose.yml up -d
-# to stop  ethercalc: sudo docker-compose -f ./ethercalc-compose.yml down
+# this is the file used by docker-compose to launch galaxy
+# to start galaxy: sudo docker-compose -f ./galaxy-compose.yml up -d
+# to stop  galaxy: sudo docker-compose -f ./galaxy-compose.yml down
 
-# EtherCalc REST API docs: http://docs.ethercalc.apiary.io/ or https://github.com/audreyt/ethercalc/blob/master/API.md
-# EtherCalc home: https://ethercalc.net/
-# EtherCalc GitHub: https://github.com/audreyt/ethercalc
-# EtherCalc Docker: https://hub.docker.com/r/audreyt/ethercalc/
 # docker-compose reference: https://docs.docker.com/compose/
 # docker-compose variable substitution: https://docs.docker.com/compose/compose-file/#variable-substitution
 
@@ -13,18 +9,15 @@
 galaxy:
   security_opt:
     - label:user:${DOCKER_UID}
-  # for some reason, cap_drop all causes the galaxy container to infinitely restart
-  # cap_drop:
-  #   - ALL
-  # image: workflow4metabolomics/galaxy-workflow4metabolomics:release-2.5.1.4
+  # for some reason, cap_drop ALL causes the galaxy container to infinitely restart
   # image: workflow4metabolomics/galaxy-workflow4metabolomics:latest
   image: galaxy-w4m-cgh:latest
   ports:
-    - "9080:80"
-    - "9021:21"
+    - "8080:80"
+    - "8021:21"
   volumes:
     - ${EXPORT_PARENT_DIR}/export:/export/
-      # - /zpdrone/drone/home/ucosm/${GALAXY_IDENTITY}/local_tools:/local_tools/
+    - ${EXPORT_PARENT_DIR}/log/supervisor:/var/log/supervisor/
   environment:
     - GALAXY_CONFIG_ADMIN_USERS=${GALAXY_CONFIG_ADMIN_USERS}
     - GALAXY_CONFIG_BRAND="${GALAXY_IDENTITY} W4M"
@@ -35,6 +28,10 @@ galaxy:
     - redis
   restart: always
 
+# EtherCalc REST API docs: http://docs.ethercalc.apiary.io/ or https://github.com/audreyt/ethercalc/blob/master/API.md
+# EtherCalc home: https://ethercalc.net/
+# EtherCalc GitHub: https://github.com/audreyt/ethercalc
+# EtherCalc Docker: https://hub.docker.com/r/audreyt/ethercalc/
 # Launch ethercalc in a Docker container
 ethercalc:
   security_opt:
@@ -59,19 +56,5 @@ redis:
   # volumes:
   #   - /var/lib/redis:/data
   command: redis-server --appendonly yes
-  restart: always
-
-# Launch ethercalc in a Docker container
-ethercalc:
-  security_opt:
-    - label:user:${DOCKER_UID}
-  cap_drop:
-    - ALL
-  #image: audreyt/ethercalc
-  image: eschen42/ethercalc
-  ports:
-    - "8000:8000"
-  links:
-    - redis
   restart: always
 

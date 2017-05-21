@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# abort if any command fails or enviroment variable is not set properly
-set -eu
-
 # find the directory containing this script
 MY_SOURCE="${BASH_MY_SOURCE[0]}"
 while [ -h "$MY_SOURCE" ]; do # resolve $MY_SOURCE until the file is no longer a symlink
@@ -12,6 +9,9 @@ while [ -h "$MY_SOURCE" ]; do # resolve $MY_SOURCE until the file is no longer a
 done
 MY_DIR="$( cd -P "$( dirname "$MY_SOURCE" )" && pwd )"
 MY_DIR_NAME=$(echo $MY_DIR | sed -e 's?.*/??')
+
+# abort if any command fails or enviroment variable is not set properly
+set -eu
 
 # set up GALAXY_IDENTITY for this script and galaxy-compose.xml
 GALAXY_IDENTITY=$(cat ${MY_DIR}/GALAXY_IDENTITY); export GALAXY_IDENTITY

@@ -25,6 +25,11 @@ GALAXY_CONFIG_ADMIN_USERS=$(cat ${MY_DIR}/GALAXY_CONFIG_ADMIN_USERS); export GAL
 # set up EXPORT_PARENT_DIR for galaxy-compose.xml
 EXPORT_PARENT_DIR=$(cat ${MY_DIR}/EXPORT_PARENT_DIR); export EXPORT_PARENT_DIR
 
+# ensure that directories exist
+sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/export         ]; then mkdir ${EXPORT_PARENT_DIR}/export;         fi"
+sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log            ]; then mkdir ${EXPORT_PARENT_DIR}/log;            fi"
+sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log/supervisor ]; then mkdir ${EXPORT_PARENT_DIR}/log/supervisor; fi"
+
 # DOCKER_USER=$USER ; export DOCKER_USER
 # DOCKER_GROUP=$(grep "^$USER:" /etc/passwd | cut -f 4 -d ':') ; export DOCKER_GROUP
 DOCKER_USER=galaxy
