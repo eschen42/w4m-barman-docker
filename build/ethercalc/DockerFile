@@ -1,6 +1,6 @@
 # Note that eschen42/ethercalc was built using:
-#  - this command: sudo docker build -t eschen42/ethercalc -f ./ethercalc.DockerFile . 
-#  - the following ./ethercalc.DockerFile contents:
+#  - this command: sudo docker build -t eschen42/ethercalc -f ./DockerFile . 
+#  - the following ./DockerFile contents:
 FROM node:4.4
 
 RUN useradd ethercalc --create-home
