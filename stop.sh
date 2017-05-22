@@ -1,13 +1,20 @@
 #!/bin/bash
+# this script must be run as root or with sudo
 
 # find the directory containing this script
-MY_SOURCE="${BASH_MY_SOURCE[0]}"
-while [ -h "$MY_SOURCE" ]; do # resolve $MY_SOURCE until the file is no longer a symlink
+MY_SOURCE="${BASH_SOURCE[0]}"
+
+# resolve $MY_SOURCE until the file is no longer a symlink
+while [ -h "$MY_SOURCE" ]; do
   MY_DIR="$( cd -P "$( dirname "$MY_SOURCE" )" && pwd )"
   MY_SOURCE="$(readlink "$MY_SOURCE")"
   [[ $MY_SOURCE != /* ]] && MY_SOURCE="$MY_DIR/$MY_SOURCE" # if $MY_SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
+
+# deduce the directory path from MY_SOURCE
 MY_DIR="$( cd -P "$( dirname "$MY_SOURCE" )" && pwd )"
+
+# deduce the directory name from MY_SOURCE
 MY_DIR_NAME=$(echo $MY_DIR | sed -e 's?.*/??')
 
 # abort if any command fails or enviroment variable is not set properly
@@ -33,19 +40,19 @@ DOCKER_UID=$(grep "^$DOCKER_USER:" /etc/passwd | cut -f 3 -d ':'); export DOCKER
 
 set +e
 echo stop Galaxy processes gracefully - notably, postgresql
-sudo -E docker exec -ti ${GALAXY_IDENTITY}_galaxy_1 bash -c "supervisorctl stop all"
+docker exec -ti ${GALAXY_IDENTITY}_galaxy_1 bash -c "supervisorctl stop all"
 
 ###############################
 
 # stop the suite of docker containers for the Galaxy instance 
 echo running docker-compose down for UID=$DOCKER_USER
 (
-  sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml down
+  docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml down
 ) && (
   echo docker-compose down succeeded
 )
 
 echo cleaning up volumes that will never be used again
 # docker volume rm `docker volume ls  -f 'dangling=true' | grep -v DRIVER | sed -e "s/local[ ]*//"`
-sudo -E docker volume rm $( sudo docker volume ls -q -f 'dangling=true' )
+docker volume rm $( sudo docker volume ls -q -f 'dangling=true' )
 echo clean-up completed
