@@ -32,11 +32,25 @@ GALAXY_CONFIG_ADMIN_USERS=$(cat ${MY_DIR}/GALAXY_CONFIG_ADMIN_USERS); export GAL
 # set up EXPORT_PARENT_DIR for galaxy-compose.xml
 EXPORT_PARENT_DIR=$(cat ${MY_DIR}/EXPORT_PARENT_DIR); export EXPORT_PARENT_DIR
 
+# set up *_PORT* for galaxy-compose.xml
+GALAXY_PORT_FTP=$(cat ${MY_DIR}/GALAXY_PORT_FTP);         export GALAXY_PORT_FTP
+GALAXY_PORT_HTTP=$(cat ${MY_DIR}/GALAXY_PORT_HTTP);       export GALAXY_PORT_HTTP
+ETHERCALC_PORT_CALC=$(cat ${MY_DIR}/ETHERCALC_PORT_CALC); export ETHERCALC_PORT_CALC
+
 # DOCKER_USER=$USER ; export DOCKER_USER
 # DOCKER_GROUP=$(grep "^$USER:" /etc/passwd | cut -f 4 -d ':') ; export DOCKER_GROUP
 DOCKER_USER=galaxy
 # extract and export UID for docker user
 DOCKER_UID=$(grep "^$DOCKER_USER:" /etc/passwd | cut -f 3 -d ':'); export DOCKER_UID
+
+echo MY_DIR                    = $MY_DIR
+echo DOCKER_UID                = $DOCKER_UID
+echo GALAXY_IDENTITY           = $GALAXY_IDENTITY
+echo GALAXY_CONFIG_ADMIN_USERS = $GALAXY_CONFIG_ADMIN_USERS
+echo EXPORT_PARENT_DIR         = $EXPORT_PARENT_DIR
+echo GALAXY_PORT_FTP           = $GALAXY_PORT_FTP
+echo GALAXY_PORT_HTTP          = $GALAXY_PORT_HTTP
+echo ETHERCALC_PORT_CALC       = $ETHERCALC_PORT_CALC
 
 set +e
 echo stop Galaxy processes gracefully - notably, postgresql

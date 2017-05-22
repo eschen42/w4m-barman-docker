@@ -53,6 +53,10 @@ echo DOCKER_UID                = $DOCKER_UID
 echo GALAXY_IDENTITY           = $GALAXY_IDENTITY
 echo GALAXY_CONFIG_ADMIN_USERS = $GALAXY_CONFIG_ADMIN_USERS
 echo EXPORT_PARENT_DIR         = $EXPORT_PARENT_DIR
+echo GALAXY_PORT_FTP           = $GALAXY_PORT_FTP
+echo GALAXY_PORT_HTTP          = $GALAXY_PORT_HTTP
+echo ETHERCALC_PORT_CALC       = $ETHERCALC_PORT_CALC
+
 set +e
 
 ###############################
