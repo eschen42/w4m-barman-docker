@@ -1,4 +1,5 @@
 #!/bin/bash
+# this script must be run as root or with sudo
 
 # find the directory containing this script
 MY_SOURCE="${BASH_MY_SOURCE[0]}"
@@ -26,9 +27,9 @@ GALAXY_CONFIG_ADMIN_USERS=$(cat ${MY_DIR}/GALAXY_CONFIG_ADMIN_USERS); export GAL
 EXPORT_PARENT_DIR=$(cat ${MY_DIR}/EXPORT_PARENT_DIR); export EXPORT_PARENT_DIR
 
 # ensure that directories exist
-sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/export         ]; then mkdir ${EXPORT_PARENT_DIR}/export;         fi"
-sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log            ]; then mkdir ${EXPORT_PARENT_DIR}/log;            fi"
-sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log/supervisor ]; then mkdir ${EXPORT_PARENT_DIR}/log/supervisor; fi"
+bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/export         ]; then mkdir ${EXPORT_PARENT_DIR}/export;         fi"
+bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log            ]; then mkdir ${EXPORT_PARENT_DIR}/log;            fi"
+bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log/supervisor ]; then mkdir ${EXPORT_PARENT_DIR}/log/supervisor; fi"
 
 # DOCKER_USER=$USER ; export DOCKER_USER
 # DOCKER_GROUP=$(grep "^$USER:" /etc/passwd | cut -f 4 -d ':') ; export DOCKER_GROUP
@@ -48,7 +49,7 @@ set +e
 # start the suite of docker containers for the Galaxy instance 
 echo running docker-compose up for UID=$DOCKER_USER
 (
-  sudo -E docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml up -d
+  docker-compose -p ${GALAXY_IDENTITY} -f ${MY_DIR}/galaxy-compose.yml up -d
 ) && (
   echo docker-compose up succeeded
 )
