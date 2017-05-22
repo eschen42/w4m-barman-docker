@@ -25,6 +25,11 @@ GALAXY_CONFIG_ADMIN_USERS=$(cat ${MY_DIR}/GALAXY_CONFIG_ADMIN_USERS); export GAL
 # set up EXPORT_PARENT_DIR for galaxy-compose.xml
 EXPORT_PARENT_DIR=$(cat ${MY_DIR}/EXPORT_PARENT_DIR); export EXPORT_PARENT_DIR
 
+# set up *_PORT* for galaxy-compose.xml
+GALAXY_PORT_FTP=$(cat ${MY_DIR}/GALAXY_PORT_FTP);         export GALAXY_PORT_FTP
+GALAXY_PORT_HTTP=$(cat ${MY_DIR}/GALAXY_PORT_HTTP);       export GALAXY_PORT_HTTP
+ETHERCALC_PORT_CALC=$(cat ${MY_DIR}/ETHERCALC_PORT_CALC); export ETHERCALC_PORT_CALC
+
 # ensure that directories exist
 sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/export         ]; then mkdir ${EXPORT_PARENT_DIR}/export;         fi"
 sudo -E bash -c "if [ ! -d ${EXPORT_PARENT_DIR}/log            ]; then mkdir ${EXPORT_PARENT_DIR}/log;            fi"

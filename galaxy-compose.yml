@@ -13,8 +13,8 @@ galaxy:
   # image: workflow4metabolomics/galaxy-workflow4metabolomics:latest
   image: galaxy-w4m-cgh:latest
   ports:
-    - "8080:80"
-    - "8021:21"
+    - "${GALAXY_PORT_HTTP}:80"
+    - "${GALAXY_PORT_FTP}:21"
   volumes:
     - ${EXPORT_PARENT_DIR}/export:/export/
     - ${EXPORT_PARENT_DIR}/log/supervisor:/var/log/supervisor/
@@ -40,7 +40,7 @@ ethercalc:
     - ALL
   image: eschen42/ethercalc
   ports:
-    - "8000:8000"
+    - "${ETHERCALC_PORT_CALC}:8000"
   links:
     - redis
   restart: always
